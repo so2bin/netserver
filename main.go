@@ -16,24 +16,25 @@ func main() {
 	var instr string
 	var statelock = false
 	var st = time.NewTicker(2 * time.Second)
-	go goServerLoop()
+	svr := new(server.Server)
+	go goServerLoop(svr)
 	for {
 		fmt.Printf("input command>: ")
 		scan := bufio.NewScanner(os.Stdin)
 		if scan.Scan() {
 			instr = scan.Text()
-			fmt.Println(instr)
+			//fmt.Println(instr)
 			switch instr {
 			case "exit":
+				svr.Destory()
 				teardown()
 				return
 			case "showstate":
 				statelock = !statelock
+				fmt.Println(statelock)
 				if statelock {
-					fmt.Println(statelock)
-					go showState(st.C)
+					go showState(st.C, svr)
 				} else {
-					fmt.Println(statelock)
 					st.Stop()
 				}
 			default:
@@ -46,16 +47,17 @@ func main() {
 }
 
 // server main loop function
-func goServerLoop() {
-	svr := new(Server)
+func goServerLoop(svr *server.Server) {
+	fmt.Println("server begin listening tcp port....")
 	svr.Start()
 	defer svr.Destory()
 }
 
-func showState(c <-chan time.Time) {
+func showState(c <-chan time.Time, svr *server.Server) {
 	for v := range c {
+		v = v
 		time.Sleep(time.Second * 2)
-		fmt.Println(v, "showstate...")
+		svr.ShowSvrverState()
 	}
 }
 
