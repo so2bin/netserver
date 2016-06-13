@@ -60,7 +60,7 @@ func goDearConn(snd map[string]netnode, lstr string) {
 		n, err := conn.Read(buf)
 		if err != nil {
 			fmt.Println("connection is break ", lstr)
-			delete(svr.nodes, lstr)
+			delete(snd, lstr)
 			return
 		}
 		fmt.Println(n, string(buf))
