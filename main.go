@@ -33,6 +33,7 @@ func main() {
 				statelock = !statelock
 				fmt.Println(statelock)
 				if statelock {
+					st = time.NewTicker(2 * time.Second)
 					go showState(st.C, svr)
 				} else {
 					st.Stop()
